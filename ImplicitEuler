@@ -1,0 +1,36 @@
+function error = imp_eul(a,b,Nx,Nt,Tf,n)
+% a and b are left and right boundaries
+% Nx - number of space points
+% Nt - number of time points
+% Tf - time upper boundary
+% n - time point out of Nt
+
+rhs = @(t,x)(cos(t)+(pi^2)*sin(t))*sin(pi*x);
+h=(b-a)/(Nx+1);             %space step
+tau = Tf/Nt;                %time step
+
+c = tau/(h^2);              %courant number
+
+x0 = zeros(Nx+2,1);         %pre-allocate memory for x
+u = zeros(Nx+2);            %pre-allocate memory for u
+t = tau*n.*ones(Nx+2,1);    %vector to be used in exact solution
+
+for i = 2:Nx+2
+    x0(i,1) = (i-1)*h;
+    u(i,1) = sin(pi*x0(i)); %initial condition
+end
+
+e = ones(Nx+2,1);
+A = (diag((1+2*c).*e,0)+diag(-c*e(1:Nx+1),1)+ diag(-c*e(1:Nx+1),-1));
+for k = 2:Nt   
+    uu=u(1:Nx+2,k-1) + tau.*rhs(1:Nx+2,k-1)';   %U(n) + dt*f(i,n)
+    u(1:Nx+2,k) = A\uu;                         %U(n+1) = A\U(n)
+end
+U = u(1:Nx+2,n);
+
+exact = (exp(-pi^2*t) + sin(t)).*sin(pi.*x0);   %calculates exact function
+error = max(abs(U - exact));                    %calculates error
+plot(x0,u(1:Nx+2,n),'r')                        %plot approximation
+hold on
+plot(x0,exact,'b')                              %plot exact
+end

@@ -1,0 +1,22 @@
+function [x,nitr] = secant(f, x0, x1, tol, N)
+% Used to find the root of a given function
+% Input - a function, initial guesses, an iteration limit and a tolerance
+% Output - a point for which the function has a small value
+x = x1; xo = x0; fxo = f(xo);     
+nitr = 0;
+    while nitr <= N
+        fx = f(x);
+        if abs(fx) < tol
+            break;
+        end
+        fpx = (fx - fxo)/(x-xo);
+        xo = x; fxo = fx;
+        x = x - (fx./fpx);
+        nitr = nitr + 1;
+    end
+if nitr < N
+    disp(['Solution found after ' num2str(nitr) ' iterations']);
+else
+    disp('Warning: Number of allowed iterations exceeded');
+end
+end

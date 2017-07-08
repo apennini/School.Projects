@@ -1,0 +1,40 @@
+function En = crank(a,b,Nx,Nt,Tf,n)
+% a and b are the space boundary points
+% Tf is the time boundary point
+% Nx - number of space points
+% Nt - number of time points
+% Tf - time upper boundary
+% n - time point out of Nt
+
+rhs = @(x,t)(cos(t)+(pi^2)*sin(t))*sin(pi*x);
+h=(b-a)/(Nx+1);                   %space step
+tau = Tf/Nt;                      %time step
+
+c = tau/(h^2);                    %courant number
+
+x0 = zeros(Nx+2,1);               %pre-allocate memory for x
+u = zeros(Nx+2,1);                %pre-allocate memory for u
+
+for i = 2:Nx+2
+    x0(i,1) = (i-1)*h;
+    u(i,1) = sin(pi*x0(i));       %initial condition
+end
+
+e = ones(Nx+2,1);
+D = inv(diag((2+2*c).*e,0)+diag(-c*e(1:Nx+1),1)+ diag(-c*e(1:Nx+1),-1));
+E = diag((2-2*c).*e,0)+diag(c*e(1:Nx+1),1)+ diag(c*e(1:Nx+1),-1);
+
+for k = 2:Nt
+        uu=u(1:Nx+2,k-1);               %U(n)
+        R = (E*uu) + rhs(1:Nx+2,k/2)';  %U(n)*E + f(i, n+1/2)
+        u(1:Nx+2,k) = D*R;              %U(n+1)*D
+end
+U = u(1:Nx+2,n);
+t = tau*n.*ones(Nx+2,1);                                      %vector to be used in exact solution
+exact(1:Nx+2,n) = (exp((-pi^2)*t) + sin(t)).*sin(pi.*x0);     %calculates exact solution
+error = max(abs(U - exact));                                  %calculates maximum error
+En = max(error);
+plot(x0,u(1:Nx+2,n),'r')                                      %plots approximate solution
+hold on
+plot(x0,exact(1:Nx+2,n),'b')                                  %plots exact solution
+end

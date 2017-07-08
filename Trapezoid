@@ -1,0 +1,26 @@
+function [I,nfev,abs_error] = trapez(f,a,b,n)
+%function used to approximate integral using composite trapezoidal rule on n intervals
+%   input - function, interval points a and b, number of intervals
+%   output - approximate value of the integral
+            % number of function evaluations performed during the
+            % calculation
+
+h = (a+b)/n;          % calculates the size of the subintervals
+sum = 0;
+nfev = 0;             % begin count of number of evaluations
+for i = 0
+    x = i*h;          % calculates the values of each subinterval
+    x1 = (i+1)*h;
+    sum = sum + f(x) + f(x1); % calculates the sum of all values of the function at each subinterval
+    nfev = nfev + 2;          % update number of evaluations
+end
+for i = 1:n-1
+    x = i*h;                  % calculates the values of each subinterval
+    x1 = (i+1)*h;
+    sum = sum + f(x) + f(x1); % calculates the sum of all values of the function at each subinterval
+    nfev = nfev + 1;          % update number of evaluations
+end
+I = (h/2)*sum;
+E = (pi/2) + log(2) - 2;      % calculates the exact value of the integral
+abs_error = abs(I - E);       % calculates the absolute error (approximate value - true value) of the integral
+end

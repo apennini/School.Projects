@@ -1,0 +1,23 @@
+function [x,norm_ek] = richardson(A,b,x0,nmax,tau)
+% function used to approximate solution x by Richardson Iteration
+% Input - matrix A, vector b, number of iterations, initial guess vector
+% Output - table of solution vectors from 1 to N_Iter
+
+x_exact = A\b;
+x = x0;
+norm_ek = zeros(nmax,1);
+
+for k = 1:nmax
+    norm_ek(k) = norm(x - x_exact);
+    if norm(b - A*x)/norm(b) <= tau
+        break;
+    end
+    x = x - A*x + b;
+end
+if norm(b - A*x)/norm(b) > tau
+    disp(['Did not converge after ' num2str(nmax) ' iterations']);
+else
+    disp(['Converged after ' num2str(k) ' iterations']);
+    norm_ek(k+1:nmax) = [];
+end
+end

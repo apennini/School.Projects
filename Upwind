@@ -1,0 +1,36 @@
+function error = upwind(Nt,Nx,Tf,n,a)
+% a - drift coefficient for advection equation
+% Nx - number of space points
+% Nt - number of time points
+% Tf - time upper boundary
+% n - time point out of Nt
+ 
+h = 1/Nx;               %space step
+tau = Tf/Nt;            %time step
+v = tau/h;              %courant number
+u = zeros(Nx+1);        %pre-allocate memory for u
+x0 = zeros(Nx+1,1);     %pre-allocate memory for x
+c = a*v; 
+ 
+for i = 2:Nx+1
+    x0(i,1) = (i-1)*h;
+end
+ 
+u(1:Nx+1,1) = un(x0);   %initial condition
+ 
+for k = 1:Nt
+    for i = 2:Nx
+        if a > 0 
+            u(i,k+1) = u(i,k) - c*(u(i,k) - u(i-1,k));
+        else
+            u(i,k+1) = u(i,k) + c*(u(i,k) - u(i+1,k));
+        end
+    end
+end
+t = tau*(n).*ones(Nx+1,1);              %vector to be used in exact solution
+exact = un(x0 + 2*t);                   %calculates exact solution
+error = abs(max(u(1:Nx+1,n+1)-exact));  %calculates maximum error at each n
+plot(x0,exact,'k')                      %plots exact solution
+hold on
+plot(x0,u(1:Nx+1,n+1),'b')              %plots approximate solution
+end

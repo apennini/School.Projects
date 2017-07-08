@@ -1,0 +1,26 @@
+function [I,nfev,abs_error] = simpson(f,a,b,n)
+%function used to approximate integral using composite Simpson rule on n intervals
+%   input - function, interval points a and b, number of intervals
+%   output - approximate value of the integral
+            % number of function evaluations performed during the
+            % calculation
+h = (b-a)/n;              % calculates the size of the subintervals
+sum = 0;
+nfev = 0;                 % begins count of number of evaluations
+for i = 1:(n/2)-1
+    xi = 2*i*h;           % calculates the value at each subinterval for i
+    sum = sum + f(xi);    % sums all values of f(xi)
+    nfev = nfev + 1;      % updates number of evaluations count
+end
+sum1 = 0;
+for j = 1:(n/2)
+    xj = ((2*j)-1)*h;     % calculates the value at each subinterval for j
+    sum1 = sum1 + f(xj);  % sums all values of f(xj)
+    nfev = nfev + 1;      % updates number of evaluations count
+end
+
+I = (h/3)*(f(a) + 2*sum + 4*sum1 + f(b));
+nfev = nfev + 2;            % updates number of evaluations count
+E = (pi/2) + log(2) - 2;    % calculates the exact value of the integral
+abs_error = abs(I - E);     % calculates the absolute error (approximate value - true value) of the integral
+end

@@ -1,0 +1,36 @@
+function error = exp_eul(a,b,Nx,Nt,Tf,n)
+% a and b are left and right boundaries
+% Nx - number of space points
+% Nt - number of time points
+% Tf - time upper boundary
+% n - time point out of Nt
+
+rhs = @(t,x) sin(t+x);
+h=(b-a)/(Nx+1);                     %space step
+tau = Tf/Nt;                        %time step
+
+c = tau/(h^2);                      %courant number
+
+x0 = zeros(Nx+2,1);                 %pre-allocate memory for x
+u = zeros(Nx+2);                    %pre-allocate memory for u
+
+for i = 2:Nx+2
+    x0(i,1) = (i-1)*h;
+    %u(i,1) = x0(i)*(1-x0(i))';     %initial condition
+end
+u(1:Nx+2,1) = u0(x0);
+for k = 1:Nt
+    for i = 2:Nx+1
+        u(i,k+1) = u(i,k) + c*(u(i-1,k) + u(i+1,k)-2.*u(i,k)) + tau*rhs(i,k); %U(n+1) = U(n) + dt*f(x(i),t(n))
+    end
+end
+U = u(1:Nx+2,n);
+t = tau*n.*ones(Nx+2,1);            %vector to be used in exact solution
+exact = sin(t + x0);                %calculates exact solution
+
+error = max(abs(U - exact));        %calculates maximum error at each n
+
+plot(x0,u(1:Nx+2,n),'r')            %plots approximate solution
+%hold on
+%plot(x0,exact,'b')                 %plots exact solution
+end

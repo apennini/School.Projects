@@ -1,0 +1,26 @@
+function imp_exp(Nx,Nt,Tf,n)
+h=1/Nx;             %space step
+tau = Tf/Nt;        %time step
+c = tau/(h^2);      %courant number
+x0 = zeros(Nx+1,1); %pre-allocate memory for x
+u = zeros(Nx+1);    %pre-allocate memory for u
+A = zeros(Nx+1,1);
+
+for i = 2:Nx+1
+    x0(i,1) = (i-1)*h;
+    u(i,1) = x0(i)*sin(2*pi*x0(i)); %initial condition
+end
+%e = ones(Nx+1,1);
+for k = 2:Nt
+    uu = u(1:Nx+1,k-1); %U(n)
+    for i = 1:Nx+1
+        A(i) = (c*(1 + u(i)));        
+    end  
+        B = diag((1+(2*A(1:Nx+1))),0) + diag(-A(1:Nx),1) + diag(-A(2:Nx+1),-1);
+        G = uu + tau*(uu.^2);       %G(U(n))
+        u(1:Nx+1,k) = inv(B)*G;     %U(n+1)
+        u(1,k)=0;
+end
+plot(x0,u(1:Nx+1,n),'r')
+hold on
+end

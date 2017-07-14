@@ -1,0 +1,25 @@
+function yk = dft(x)
+% function to calculate the Discrete Fourier Transform for a vector x
+%   Input - a vector x
+%   Output - solution vector yk
+
+n = max(size(x)); % number of data points in vector x
+O = exp((-2*pi*1i)/n); % calculation of nth root of unity for vector x
+yk = zeros(1,n); % pre-allocating space for yk
+
+for k = 0
+    y = 0;
+    for l = 1:n
+        y = y + (x(l)*(O^(k*l))); % calculating function for k = 0
+    end
+end
+yk(1,1) = y; % assigning value of y for k = 0 to vector yk
+for k = 1:n-1
+    y(k) = 0;
+    for l = 0:n-1
+        y(k) = y(k) + (x(l+1)*(O^(k*l))); % calculating function for k = 1:n-1
+    end
+end
+yk(2:n) = y; % assigning values of y for k = 1:n-1 to vector yk
+yk = yk'; % transposing the vector yk
+end

@@ -1,0 +1,17 @@
+function [p,max_error] = eval_newton(ck,xi)
+% function evaluates Newton's interpolating polynomial in nested form
+
+m = max(size(ck)); % number of Newton coefficients
+p = zeros(m,1); % pre-allocates memory for solution vector p
+
+yi = zeros(m,1);
+for j = 1:m
+    yi(j) = (-1).^(xi(j))*(xi(j)); % calculates associated vector yi (true value) to vector xi
+    P(j) = ck(m);
+    for i = m-1:-1:1
+        P = ck(i) + (xi(j) - xi(i))*P; % calculates nested polynomial with Newton coefficients for vector xi
+    end
+    p(j,1) = P(j); % assigns resulting values to vector p
+end
+max_error = max(abs(p-yi)); % calculates the absolute error (approximate value - true value) between p(xi) and yi
+end

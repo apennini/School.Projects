@@ -1,0 +1,18 @@
+function p = eval_monomial(n,a)
+% function evaluates Newton's interpolating polynomial in nested form
+
+%p(x) = ck1 + x*(ck2 + x*(ck3 + x*(ck4 + x*(ck5 + x*(ck6)))))
+m = max(size(ck)); % number of Newton coefficients
+n = m - 1; % number of x variables in polynomial
+
+
+p = zeros(n,1);
+
+for k = 1:n
+    x(k) = xi(k);
+    P(k) = 0;
+    for l = n:-1:1
+        P = (P * x(k)) + a(l);
+    end
+    p(k,1) = P(k);
+end

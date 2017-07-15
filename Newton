@@ -1,0 +1,20 @@
+function ck = newton_coef(xi,yi)
+% calculates coefficients of newton's interpolating polynomial by divided
+% differences
+%   Input - xi is the vector of n nodes
+%           yi is the vector of n values
+%   Output - vector of Newton coefficients
+n = max(size(xi)); % max size of vector xi
+
+C = zeros(n,n); % pre-allocating space for matrix of solutions
+C(1:n,1) = yi; % assigning first column to matrix C
+
+for it = 1:n-1
+    m = max(size(yi)); % changing max size of vector yi
+    y = yi(2:m)-yi(1:m-1); % calculating the y differences
+    x = xi(it+1:n)-xi(1:m-1); % calculating the x differences
+    yi = y./x; % calculating the divided differences per iteration
+    C(it+1:n,it+1)=yi; % assigning divided differences per iteration to columns of matrix C
+end
+ck = diag(C); % isolating the Newton coefficients of matrix C
+end

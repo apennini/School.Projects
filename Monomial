@@ -1,0 +1,31 @@
+function [a,p,max_error] = monomial(n)
+% function to interpolate via monomial basis and Vandermonde matrix
+%   input - value of n
+%   output - vector solution a
+ 
+V = zeros(n,n); % pre-allocating Vandermonde matrix
+x = zeros(n,1); % pre-allocating x vector
+y = zeros(n,1); % pre-allocating y vector
+ % assigning vector of ones for column 1 of matrix V
+    for i = 1:n
+        x(i) = i;
+        y(i) = ((-1)^i)*(i);
+        for j = 1:n
+        V(1:n,j) = x.^(j-1); % assigning the rest of column vectors to matrix V        
+        end
+    end
+a = V\y; % calculating solution vector a
+
+p = zeros(n,1);
+
+for i = 1:n
+    x(i) = x(i);
+    P(i) = 0;
+    for l = n:-1:1
+        P = (P * x(i)) + a(l);
+    end
+    p(i,1) = P(i);
+end
+max_error = max(abs(p - y));
+end
+
